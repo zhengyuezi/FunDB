@@ -4,6 +4,7 @@
 
 #![deny(warnings)]
 #![deny(missing_docs)]
+#![allow(clippy::upper_case_acronyms)]
 
 pub mod helper;
 pub mod mapx;
