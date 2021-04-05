@@ -131,7 +131,7 @@ where
     /// Imitate the behavior of '.iter()'
     #[inline(always)]
     pub fn iter(&self) -> Box<dyn Iterator<Item = T> + '_> {
-        todo!()
+        Box::new(self.in_disk.iter().map(|(_, x)| x)) //todo!()
     }
 
     /// Flush data to disk
@@ -163,7 +163,7 @@ where
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        self.iter.next().map(|(_, x)| x) //todo!()
     }
 }
 
@@ -182,7 +182,7 @@ where
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        self.iter.next().map(|(_, x)| x.clone()) //todo!()
     }
 }
 
@@ -221,6 +221,7 @@ where
         D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_str(FunDBVisitor).map(|meta| {
+            let meta = meta.replace("\\", "/");
             let meta = pnk!(serde_json::from_str::<FunDBMeta>(&meta));
             pnk!(Vecx::new(
                 meta.data_path.to_owned(),

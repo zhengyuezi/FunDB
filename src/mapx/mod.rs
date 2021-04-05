@@ -162,7 +162,7 @@ where
     /// Imitate the behavior of '.iter()'
     #[inline(always)]
     pub fn iter(&self) -> Box<dyn Iterator<Item = (K, V)> + '_> {
-        todo!()
+        Box::new(self.in_disk.iter()) // todo!()
     }
 
     /// Check if a key is exists.
@@ -441,6 +441,7 @@ where
         D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_str(FunDBVisitor).map(|meta| {
+            let meta = meta.replace("\\", "/");
             let meta = pnk!(serde_json::from_str::<FunDBMeta>(&meta));
             pnk!(Mapx::new(
                 meta.data_path.to_owned(),

@@ -122,7 +122,7 @@ where
     // Imitate the behavior of '.iter()'
     #[inline(always)]
     pub(super) fn iter(&self) -> MapxIter<K, V> {
-        todo!()
+        MapxIter { iter: self.db.iter(), _pd0: PhantomData, _pd1: PhantomData } //todo!()
     }
 
     pub(super) fn contains_key(&self, key: &K) -> bool {
@@ -177,7 +177,13 @@ where
 {
     type Item = (K, V);
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        self.iter  //todo!()
+            .next()
+            .and_then(|r1| r1.ok())
+            .and_then(|(k,v)| match (serde_json::from_slice::<K>(k.as_ref()) , serde_json::from_slice::<V>(v.as_ref())) {
+                (Ok(k), Ok(v)) => Some((k, v)),
+                (_, _) => None
+            })
     }
 }
 
@@ -187,7 +193,13 @@ where
     V: Clone + Eq + PartialEq + Serialize + DeserializeOwned + fmt::Debug,
 {
     fn next_back(&mut self) -> Option<Self::Item> {
-        todo!()
+        self.iter  //todo!()
+            .next_back()
+            .and_then(|r1| r1.ok())
+            .and_then(|(k,v)| match (serde_json::from_slice::<K>(k.as_ref()) , serde_json::from_slice::<V>(v.as_ref())) {
+                (Ok(k), Ok(v)) => Some((k, v)),
+                (_, _) => None
+            })
     }
 }
 
@@ -212,7 +224,7 @@ where
     V: Clone + Eq + PartialEq + Serialize + DeserializeOwned + fmt::Debug,
 {
     fn eq(&self, other: &Mapx<K, V>) -> bool {
-        todo!()
+        self.cnter == other.cnter && self.iter().zip(other.iter()).all(|((k1,v1),(k2, v2))| k1 == k2 && v1 == v2) //todo!()
     }
 }
 
